@@ -1,9 +1,9 @@
 import { ScoreInputSchema } from '../lib/schema.js';
 import { score } from '../lib/scoring.js';
 import { safeParseJson } from '../lib/json.js';
+import type { CommandIO, CommandResult } from './types.js';
 
-export type CommandIO = { stdin: string; argv: string[]; configDir?: string };
-export type CommandResult = { exitCode: number; stdout: string; stderr: string };
+export type { CommandIO, CommandResult };
 
 export function runScoreCommand(io: CommandIO): CommandResult {
   const parsedJson = safeParseJson(io.stdin);
