@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "subagents": [
+    {
+      "name": "github-prs",
+      "description": "GitHub PRs awaiting your action (review requested, comments to address, failing CI on your PRs)",
+      "prompt": "Use the `gh` CLI (or GitHub MCP if available) to identify the single most urgent GitHub PR the user should act on. Consider: PRs where the user is requested as a reviewer (especially older ones), the user's own PRs with new comments or failing CI, and PRs blocking other work. Pick the single highest-priority one. Rationale should be 1-2 sentences. Set urgency in [0, 1]: 1 = blocking someone right now, 0.7 = stale review request > 2 days, 0.4 = recent review request, 0.2 = own PR with minor comments, 0 = nothing actionable.",
+      "dataSources": ["gh CLI", "GitHub MCP"],
+      "enabled": true,
+      "timeoutMs": 120000
+    },
+    {
+      "name": "linear-issues",
+      "description": "Linear issues assigned to you, blocking, or due soon",
+      "prompt": "Use the Linear MCP to identify the single most urgent Linear issue the user should pick up. Consider: issues assigned to the user that are In Progress (resume), Todo with high priority or due date approaching, issues blocking other team members, and recent mentions. Pick one. Rationale should be 1-2 sentences. Set urgency in [0, 1]: 1 = due today / blocking someone, 0.7 = due this week, 0.4 = high priority assigned with no due date, 0.2 = low priority, 0 = nothing actionable.",
+      "dataSources": ["Linear MCP"],
+      "enabled": true,
+      "timeoutMs": 120000
+    }
+  ]
+}

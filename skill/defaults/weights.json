@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "weights": {
+    "github-prs": 1.0,
+    "linear-issues": 1.0
+  },
+  "observationDeltas": {
+    "correlationBoost": 0.1,
+    "runtimeArgsBoost": 0.2,
+    "ambientPenalty": -0.15
+  },
+  "condensation": {
+    "historyLineThreshold": 200
+  }
+}
