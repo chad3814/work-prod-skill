@@ -45,6 +45,20 @@ describe('SubagentsConfigSchema', () => {
       }),
     ).toThrow();
   });
+
+  it('rejects empty prompt', () => {
+    expect(() => SubagentsConfigSchema.parse({
+      version: 1,
+      subagents: [{ name: 'x', description: 'd', prompt: '', dataSources: [] }],
+    })).toThrow();
+  });
+
+  it('rejects empty description', () => {
+    expect(() => SubagentsConfigSchema.parse({
+      version: 1,
+      subagents: [{ name: 'x', description: '', prompt: 'p', dataSources: [] }],
+    })).toThrow();
+  });
 });
 
 describe('WeightsConfigSchema', () => {
@@ -124,6 +138,57 @@ describe('HistoryRowSchema', () => {
         ambient: { dayOfWeek: 'Friday', localHour: 15 },
         subagentReturns: [],
         finalRanking: [{ name: 'a', title: 't', score: 0.5, rank: 4 }],
+        userPick: null,
+      }),
+    ).toThrow();
+  });
+
+  it('accepts userPick with rank 1', () => {
+    const row = {
+      timestamp: '2026-05-22T10:00:00Z',
+      runtimeArgs: null,
+      ambient: { dayOfWeek: 'Friday', localHour: 15 },
+      subagentReturns: [],
+      finalRanking: [],
+      userPick: { rank: 1, note: 'opened it' },
+    };
+    expect(() => HistoryRowSchema.parse(row)).not.toThrow();
+  });
+
+  it('accepts userPick with rank null (declined)', () => {
+    const row = {
+      timestamp: '2026-05-22T10:00:00Z',
+      runtimeArgs: null,
+      ambient: { dayOfWeek: 'Friday', localHour: 15 },
+      subagentReturns: [],
+      finalRanking: [],
+      userPick: { rank: null },
+    };
+    expect(() => HistoryRowSchema.parse(row)).not.toThrow();
+  });
+
+  it('rejects userPick with rank 5', () => {
+    const row = {
+      timestamp: '2026-05-22T10:00:00Z',
+      runtimeArgs: null,
+      ambient: { dayOfWeek: 'Friday', localHour: 15 },
+      subagentReturns: [],
+      finalRanking: [],
+      userPick: { rank: 5 },
+    };
+    expect(() => HistoryRowSchema.parse(row)).toThrow();
+  });
+
+  it('rejects empty subagentReturn name', () => {
+    expect(() =>
+      HistoryRowSchema.parse({
+        timestamp: '2026-05-22T10:00:00Z',
+        runtimeArgs: null,
+        ambient: { dayOfWeek: 'Friday', localHour: 15 },
+        subagentReturns: [
+          { name: '', item: null, urgency: 0.5, rationale: 'r', status: 'ok' },
+        ],
+        finalRanking: [],
         userPick: null,
       }),
     ).toThrow();

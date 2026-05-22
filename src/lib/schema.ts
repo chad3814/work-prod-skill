@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 export const SubagentSchema = z.object({
   name: z.string().min(1),
-  description: z.string(),
-  prompt: z.string(),
+  description: z.string().min(1),
+  prompt: z.string().min(1),
   dataSources: z.array(z.string()),
   enabled: z.boolean().optional(),
   timeoutMs: z.number().int().positive().optional(),
@@ -35,24 +35,24 @@ export const SubagentStatusSchema = z.enum(['ok', 'timeout', 'invalid', 'unavail
 export type SubagentStatus = z.infer<typeof SubagentStatusSchema>;
 
 export const SubagentItemSchema = z.object({
-  title: z.string(),
-  source: z.string(),
+  title: z.string().min(1),
+  source: z.string().min(1),
   ref: z.string().optional(),
 });
 export type SubagentItem = z.infer<typeof SubagentItemSchema>;
 
 export const SubagentReturnSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1),
   item: SubagentItemSchema.nullable(),
   urgency: z.number().min(0).max(1),
-  rationale: z.string(),
+  rationale: z.string().min(1),
   status: SubagentStatusSchema,
 });
 export type SubagentReturn = z.infer<typeof SubagentReturnSchema>;
 
 export const FinalRankingEntrySchema = z.object({
-  name: z.string(),
-  title: z.string(),
+  name: z.string().min(1),
+  title: z.string().min(1),
   score: z.number(),
   rank: z.union([z.literal(1), z.literal(2), z.literal(3)]),
 });
@@ -60,7 +60,7 @@ export type FinalRankingEntry = z.infer<typeof FinalRankingEntrySchema>;
 
 export const UserPickSchema = z
   .object({
-    rank: z.number().int().nullable(),
+    rank: z.union([z.literal(1), z.literal(2), z.literal(3)]).nullable(),
     note: z.string().optional(),
   })
   .nullable();
