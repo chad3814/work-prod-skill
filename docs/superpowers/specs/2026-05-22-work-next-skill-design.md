@@ -184,11 +184,12 @@ score = clamp01(
   (rawUrgency * weights[subagentName])
   + (subagent in any correlation ? correlationBoost : 0)
   + ((runtimeArgsRelevance[subagentName] ?? 0) * runtimeArgsBoost)
-  + (ambientApplies(subagentName) ? ambientPenalty : 0)
+  + (observations.ambientPenalty * Math.abs(weights.observationDeltas.ambientPenalty))
 )
 ```
 
 - `clamp01` clamps to `[0, 1]`.
+- The ambient term is a global scalar applied to every scorable subagent. `observations.ambientPenalty` is signed (-1 = full penalty, 0 = neutral, +1 = full boost) and is scaled by the magnitude of `weights.observationDeltas.ambientPenalty`. Configured weight sign is ignored — only the magnitude matters.
 - Ties break by subagent `name` ascending (deterministic).
 - Subagent returns with `status != "ok"` or `urgency == 0` are filtered out before ranking.
 
