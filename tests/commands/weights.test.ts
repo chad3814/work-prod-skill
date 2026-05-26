@@ -68,3 +68,20 @@ describe('weights apply', () => {
     expect(result.exitCode).not.toBe(0);
   });
 });
+
+describe('weights unknown subcommand', () => {
+  let dir: string;
+  beforeEach(() => { dir = createTempDir(); });
+  afterEach(() => { cleanupTempDir(dir); });
+
+  it('returns "unknown subcommand" error without parsing stdin', () => {
+    const result = runWeightsCommand({
+      stdin: 'not even json',
+      argv: ['bogus'],
+      configDir: dir,
+    });
+    expect(result.exitCode).toBe(2);
+    expect(result.stderr).toMatch(/unknown subcommand/i);
+    expect(result.stderr).not.toMatch(/json/i);
+  });
+});

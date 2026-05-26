@@ -41,6 +41,9 @@ export function runWeightsCommand(io: CommandIO): CommandResult {
   if (dir === undefined) {
     return { exitCode: 2, stdout: '', stderr: 'weights: configDir is required\n' };
   }
+  if (sub !== 'propose' && sub !== 'apply') {
+    return { exitCode: 2, stdout: '', stderr: `weights: unknown subcommand "${sub}"\n` };
+  }
 
   const parsedJson = safeParseJson<WeightsConfig>(io.stdin);
   if (!parsedJson.ok) {
@@ -67,13 +70,10 @@ export function runWeightsCommand(io: CommandIO): CommandResult {
     return { exitCode: 0, stdout: `${lines.join('\n')}\n`, stderr: '' };
   }
 
-  if (sub === 'apply') {
-    const target = weightsConfigPath(dir);
-    const tmp = `${target}.tmp`;
-    writeFileSync(tmp, `${JSON.stringify(proposed.data, null, 2)}\n`);
-    renameSync(tmp, target);
-    return { exitCode: 0, stdout: '', stderr: '' };
-  }
-
-  return { exitCode: 2, stdout: '', stderr: `weights: unknown subcommand "${sub}"\n` };
+  // sub === 'apply'
+  const target = weightsConfigPath(dir);
+  const tmp = `${target}.tmp`;
+  writeFileSync(tmp, `${JSON.stringify(proposed.data, null, 2)}\n`);
+  renameSync(tmp, target);
+  return { exitCode: 0, stdout: '', stderr: '' };
 }
