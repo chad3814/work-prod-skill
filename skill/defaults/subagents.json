@@ -7,7 +7,11 @@
       "prompt": "Use the `gh` CLI (or GitHub MCP if available) to identify the single most urgent GitHub PR the user should act on. Consider: PRs where the user is requested as a reviewer (especially older ones), the user's own PRs with new comments or failing CI, and PRs blocking other work. Pick the single highest-priority one. Rationale should be 1-2 sentences. Set urgency in [0, 1]: 1 = blocking someone right now, 0.7 = stale review request > 2 days, 0.4 = recent review request, 0.2 = own PR with minor comments, 0 = nothing actionable.",
       "dataSources": ["gh CLI", "GitHub MCP"],
       "enabled": true,
-      "timeoutMs": 120000
+      "timeoutMs": 120000,
+      "canary": {
+        "cmd": ["gh", "auth", "status"],
+        "timeoutMs": 5000
+      }
     },
     {
       "name": "linear-issues",
