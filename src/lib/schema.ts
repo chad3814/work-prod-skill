@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+export const CanarySchema = z.object({
+  cmd: z.array(z.string().min(1)).min(1),
+  timeoutMs: z.number().int().positive().optional(),
+});
+export type Canary = z.infer<typeof CanarySchema>;
+
 export const SubagentSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
@@ -7,6 +13,7 @@ export const SubagentSchema = z.object({
   dataSources: z.array(z.string()),
   enabled: z.boolean().optional(),
   timeoutMs: z.number().int().positive().optional(),
+  canary: CanarySchema.optional(),
 });
 export type Subagent = z.infer<typeof SubagentSchema>;
 

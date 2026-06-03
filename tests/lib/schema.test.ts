@@ -59,6 +59,81 @@ describe('SubagentsConfigSchema', () => {
       subagents: [{ name: 'x', description: '', prompt: 'p', dataSources: [] }],
     })).toThrow();
   });
+
+  it('accepts subagent with canary field', () => {
+    const valid = {
+      version: 1,
+      subagents: [
+        {
+          name: 'x',
+          description: 'd',
+          prompt: 'p',
+          dataSources: [],
+          canary: { cmd: ['gh', 'auth', 'status'], timeoutMs: 5000 },
+        },
+      ],
+    };
+    expect(() => SubagentsConfigSchema.parse(valid)).not.toThrow();
+  });
+
+  it('accepts subagent without canary (backward compatible)', () => {
+    const valid = {
+      version: 1,
+      subagents: [{ name: 'x', description: 'd', prompt: 'p', dataSources: [] }],
+    };
+    const parsed = SubagentsConfigSchema.parse(valid);
+    expect(parsed.subagents[0]?.canary).toBeUndefined();
+  });
+
+  it('rejects canary with empty cmd array', () => {
+    expect(() =>
+      SubagentsConfigSchema.parse({
+        version: 1,
+        subagents: [
+          {
+            name: 'x',
+            description: 'd',
+            prompt: 'p',
+            dataSources: [],
+            canary: { cmd: [], timeoutMs: 5000 },
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  it('rejects canary with zero or negative timeoutMs', () => {
+    expect(() =>
+      SubagentsConfigSchema.parse({
+        version: 1,
+        subagents: [
+          {
+            name: 'x',
+            description: 'd',
+            prompt: 'p',
+            dataSources: [],
+            canary: { cmd: ['gh'], timeoutMs: 0 },
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  it('canary timeoutMs is optional (has default applied at runtime by config loader)', () => {
+    const valid = {
+      version: 1,
+      subagents: [
+        {
+          name: 'x',
+          description: 'd',
+          prompt: 'p',
+          dataSources: [],
+          canary: { cmd: ['gh', 'auth', 'status'] },
+        },
+      ],
+    };
+    expect(() => SubagentsConfigSchema.parse(valid)).not.toThrow();
+  });
 });
 
 describe('WeightsConfigSchema', () => {
