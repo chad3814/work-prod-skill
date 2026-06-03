@@ -32,7 +32,7 @@ async function main(): Promise<void> {
       result = runScoreCommand(io);
       break;
     case 'config':
-      result = runConfigCommand(io);
+      result = await runConfigCommand(io);
       break;
     case 'history':
       result = runHistoryCommand(io);
