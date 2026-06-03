@@ -26,10 +26,25 @@ If exit code == 0, parse the stdout JSON. It has shape:
 {
   "ok": true,
   "subagents": [ { "name": "...", "prompt": "...", "timeoutMs": ..., ... }, ... ],
+  "unavailable": [ { "name": "...", "reason": "...", "stderr": "..." }, ... ],
   "weights": { ... full WeightsConfig ... },
   "ambient": { "dayOfWeek": "...", "localHour": ... }
 }
 ```
+
+For each entry in `unavailable`, immediately record a `subagentReturns` row with:
+
+```json
+{
+  "name": "<entry.name>",
+  "item": null,
+  "urgency": 0,
+  "rationale": "<entry.reason>" (optionally append ": " + entry.stderr if non-empty),
+  "status": "unavailable"
+}
+```
+
+Do **not** dispatch a subagent for any entry in `unavailable`. Step 2 fan-out only iterates `subagents`.
 
 ### 2. Fan out subagents in parallel
 
